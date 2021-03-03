@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">FoodFinder</string>
+    <string name="choose_time_of_day">Choose time of day...</string>
+    <string name="choose_dining_experience">Choose dining experience...</string>
+</resources>
