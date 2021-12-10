@@ -4,18 +4,16 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.view.View
-import android.widget.Button
 import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.foodfinder.databinding.ActivityMainBinding
 
-class AnimationManager(private val rootlinearLayout: LinearLayout,
-                       private val imageButtonList: MutableList<ImageButton>,
-                       private val goToGoogleMapsButton: Button,
-                       private val nextStepOfAppTextView: TextView,
-                       private val nextStepOfAppList: List<String>,
-                       private val iconTypes: Icons) : AppCompatActivity()
+class AnimationManager(
+    private var binding: ActivityMainBinding,
+    private var iconTypes: Icons,
+    private var imageButtonList: MutableList<ImageButton>,
+    private var nextStepOfAppList: List<String>
+) : AppCompatActivity()
 {
 
     val MAX_ROW_COUNT = iconTypes.foodIcons.size - 1
@@ -23,15 +21,15 @@ class AnimationManager(private val rootlinearLayout: LinearLayout,
 
     fun moveLinearLayout(backButtonClicked : Boolean = false)
     {
-        var end : Float = if(!backButtonClicked)
+        val end : Float = if(!backButtonClicked)
         {
-            rootlinearLayout.translationY + 300f
+            binding.rootLayout.translationY + 300f
         }
         else
         {
-            rootlinearLayout.translationY - 300f
+            binding.rootLayout.translationY - 300f
         }
-        ObjectAnimator.ofFloat(rootlinearLayout, "translationY", end).apply {
+        ObjectAnimator.ofFloat(binding.rootLayout, "translationY", end).apply {
             duration = 1000
             start()
         }
@@ -39,8 +37,8 @@ class AnimationManager(private val rootlinearLayout: LinearLayout,
     fun fadeViewsOflinearLayoutInAndOut(backButtonClicked: Boolean = false)
     {
         disableButtons()
-        rootlinearLayout.alpha = 1f
-        val linearLayoutFadeOut = rootlinearLayout.animate().apply {
+        binding.rootLayout.alpha = 1f
+        val linearLayoutFadeOut = binding.rootLayout.animate().apply {
             duration = 500
             alpha(0f)
             start()
@@ -52,7 +50,7 @@ class AnimationManager(private val rootlinearLayout: LinearLayout,
             override fun onAnimationEnd(animation: Animator?) {
                 changeImageIcons(backButtonClicked)
                 toggleGoogleMapButtonVisibility(backButtonClicked)
-                val linearLayoutFadeIn = rootlinearLayout.animate().apply {
+                val linearLayoutFadeIn = binding.rootLayout.animate().apply {
                     duration = 500
                     alpha(1f)
                     start()
@@ -76,8 +74,8 @@ class AnimationManager(private val rootlinearLayout: LinearLayout,
 
         when(backButtonClicked)
         {
-            true -> goToGoogleMapsButton.visibility = View.GONE
-            else -> goToGoogleMapsButton.visibility = View.VISIBLE
+            true -> binding.googleMapsButton.visibility = View.GONE
+            else -> binding.googleMapsButton.visibility = View.VISIBLE
         }
     }
 
@@ -108,7 +106,7 @@ class AnimationManager(private val rootlinearLayout: LinearLayout,
     }
 
     private fun changeTextOfTextView(currentRowCount: Int) {
-        nextStepOfAppTextView.text = nextStepOfAppList[currentRowCount]
+        binding.nextStepOfApp.text = nextStepOfAppList[currentRowCount]
     }
 
     fun disableButtons()

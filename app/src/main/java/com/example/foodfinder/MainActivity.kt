@@ -1,55 +1,45 @@
 package com.example.foodfinder
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
+import com.example.foodfinder.databinding.ActivityMainBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
+const val CHOSEN_ICONS = "com.example.foodfinder.ChosenIcons"
+
 class MainActivity : AppCompatActivity(){
+
+    private var binding: ActivityMainBinding? = null
 
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    lateinit var rootlinearLayout: LinearLayout
-
     lateinit var animationManager: AnimationManager
 
-    private lateinit var nextStepOfAppTextView : TextView
-
-    private lateinit var imageButtons: LinearLayout
-
     private val imageButtonList = mutableListOf<ImageButton>()
-
-    lateinit var goToGoogleMapsButton : Button
 
     private val iconTypes = Icons()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        nextStepOfAppTextView = findViewById(R.id.nextStepOfApp)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
 
         val nextStepOfAppList = listOf(getString(R.string.choose_time_of_day), getString(R.string.choose_dining_experience))
-
-        imageButtons = findViewById(R.id.buttons)
-
-        rootlinearLayout = findViewById(R.id.root_layout)
-
-        goToGoogleMapsButton = findViewById(R.id.googleMapsButton)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         val googleMapsIntent = GoogleMapsIntent(this, iconTypes.chosenIcons)
 
-        animationManager = AnimationManager(rootlinearLayout, imageButtonList, goToGoogleMapsButton, nextStepOfAppTextView, nextStepOfAppList, iconTypes)
+        animationManager = AnimationManager(binding!!, iconTypes, imageButtonList, nextStepOfAppList)
 
-        val imageButtonManager = ImageButtonSetUp(imageButtons, imageButtonList, goToGoogleMapsButton, animationManager, googleMapsIntent, iconTypes)
+        val imageButtonManager = ImageButtonSetUp(binding!!, imageButtonList, animationManager, googleMapsIntent, iconTypes)
 
         imageButtonManager.setUpImageButtons()
+
+        binding!!.showChoices.setOnClickListener { showChoicesActivity() }
     }
 
     @Override
@@ -60,8 +50,25 @@ class MainActivity : AppCompatActivity(){
         }
         else
         {
+            iconTypes.chosenIcons.removeAt(0)
             animationManager.fadeViewsOflinearLayoutInAndOut(true)
             animationManager.moveLinearLayout(true)
+        }
+    }
+
+    private fun showChoicesActivity()
+    {
+        if(iconTypes.chosenIcons.size > 0)
+        {
+            val chosenIcons = iconTypes.chosenIcons
+            val intent = Intent(this, ShowChoices::class.java).apply {
+                putExtra(CHOSEN_ICONS,chosenIcons[0]) }
+
+            startActivity(intent)
+        }
+        else
+        {
+            Toast.makeText(this, "Make a choice", Toast.LENGTH_SHORT).show()
         }
     }
 }

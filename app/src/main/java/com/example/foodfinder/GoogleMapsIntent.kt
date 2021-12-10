@@ -20,10 +20,12 @@ class GoogleMapsIntent(private var mainActivity: MainActivity, private var chose
         if(ActivityCompat.checkSelfPermission(mainActivity,
                         Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
         {
+            Log.d("Permission Granted", "Permission Granted")
             getUserLocation()
         }
         else
         {
+            Log.d("Permission Denied", "Permission Denied")
             ActivityCompat.requestPermissions(mainActivity
                     , arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 44)
         }
@@ -38,7 +40,7 @@ class GoogleMapsIntent(private var mainActivity: MainActivity, private var chose
             if (location != null)
             {
                 try {
-                    goToGoogleMaps()
+                    goToGoogleMaps(location)
                 }catch(e: IOException)
                 {
                     e.printStackTrace()
@@ -64,16 +66,16 @@ class GoogleMapsIntent(private var mainActivity: MainActivity, private var chose
     {
         override fun onLocationResult(locationResult: LocationResult) {
             val lastLocation: Location = locationResult.lastLocation
-            goToGoogleMaps()
+            goToGoogleMaps(lastLocation)
         }
     }
 
     //Uri is intended to take the data from the chosenIcons, however it did not work as expected but hopefully my intent is clear
-    private fun goToGoogleMaps()
+    private fun goToGoogleMaps(lastLocation: Location)
     {
         intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse("restaurants")
-        var chooser = Intent.createChooser(intent, "Launch Maps")
+        intent.data = Uri.parse("geo: ${lastLocation.latitude}, ${lastLocation.longitude}")
+        val chooser = Intent.createChooser(intent, "Launch Maps")
         mainActivity.startActivity(chooser)
     }
 }
