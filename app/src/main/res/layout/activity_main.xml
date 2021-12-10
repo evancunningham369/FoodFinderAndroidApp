@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/choose_time_of_day"
-            android:textSize="30dp" />
+            android:textSize="30sp" />
 
         <LinearLayout
             android:id="@+id/buttons"
@@ -51,5 +51,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Go to Google maps"/>
+    <Button
+        android:id="@+id/showChoices"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Show me what I chose"/>
 
 </LinearLayout>
